@@ -30,10 +30,13 @@ export default class Player extends HTMLElement {
         this.gainNodeVolume = audioManager.ctx.createGain();
 
         // Create Filter
-
+        this.biquadFilter = audioManager.ctx.createBiquadFilter();
+        this.biquadFilter.type = 3;
+        this.biquadFilter.frequency.value = 440;
 
         this.source.connect(this.analyser);
-        this.analyser.connect(this.gainNodeVolume);
+        this.analyser.connect(this.biquadFilter);
+        this.biquadFilter.connect(this.gainNodeVolume);
         this.gainNodeVolume.connect(audioManager.ctx.destination);
 
 
@@ -63,8 +66,10 @@ export default class Player extends HTMLElement {
             </style>
             <div>
                 <div id="progress"></div>
-                <div></div><button type="button">Play/Pause</button>
+                <div></div><button type="button" id='button'>Play/Pause</button>
                 <input type="range" id="volume" min="0" max="10"></div>
+                <input type="range" id="lowpassfrequency" min="40" max="440"></div>
+                <input type="range" id="lowpassquality" min="-20" max="0"></div>
                 <canvas id="cnv" height="80" width="700"></canvas>
             </div>
         `;
@@ -95,9 +100,14 @@ export default class Player extends HTMLElement {
         const button = this.shadowRoot.querySelector('button');
         this.elProgress = this.shadowRoot.querySelector('#progress');
         const volume = this.shadowRoot.querySelector('#volume');
+        const lowpassfrequency = this.shadowRoot.querySelector('#lowpassfrequency');
+        const lowpassquality = this.shadowRoot.querySelector('#lowpassquality');
+
 
         button.addEventListener('click', this.handleButtonClick.bind(this));
         volume.addEventListener('change', this.setVolume.bind(this));
+        lowpassfrequency.addEventListener('change', this.setLowpassFrequency.bind(this));
+        lowpassquality.addEventListener('change', this.setLowpassQuality.bind(this));
     }
 
     handleButtonClick() {
@@ -112,6 +122,15 @@ export default class Player extends HTMLElement {
     setVolume() {
         let volume = parseInt(this.shadowRoot.getElementById("volume").value);
         this.gainNodeVolume.gain.value = volume;
+    }
+
+    setLowpassFrequency() {
+        let lowpassfrequency = parseFloat(this.shadowRoot.getElementById("lowpassfrequency").value);
+        this.biquadFilter.frequency.value = lowpassfrequency;
+    }
+    setLowpassQuality() {
+        let lowpassquality = parseFloat(this.shadowRoot.getElementById("lowpassquality").value);
+        this.biquadFilter.Q.value = lowpassquality;
     }
 
     updateAudioTime() {

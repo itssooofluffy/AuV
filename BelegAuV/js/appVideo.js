@@ -23,7 +23,7 @@ export default class AppVideo extends HTMLElement {
                 <h1>Video</h1>
                 <h2>Video-Player</h2>
                 <div id="player-wrapper">
-                  <video autoplay loop controls src="./media/On_my_own.ogv"></video>
+                  <video autoplay loop controls src="./media/OnMyOwn.mp4"></video>
                   <x-video-player url="./media/Hakuouk.ogv"></x-video-player>                
                 </div>
             </div>
